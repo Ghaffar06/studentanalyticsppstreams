@@ -1,11 +1,9 @@
 package edu.coursera.parallel;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Stream;
-
+import java.util.function.Function;
+import java.util.stream.Collectors;
 /**
  * A simple wrapper class for various analytics methods.
  */
@@ -46,7 +44,9 @@ public final class StudentAnalytics {
      */
     public double averageAgeOfEnrolledStudentsParallelStream(
             final Student[] studentArray) {
-        throw new UnsupportedOperationException();
+
+        return Stream.of(studentArray).parallel().filter(Student::checkIsCurrent).mapToDouble(Student::getAge).average().getAsDouble();
+
     }
 
     /**
@@ -71,7 +71,7 @@ public final class StudentAnalytics {
         for (Student s : inactiveStudents) {
             if (nameCounts.containsKey(s.getFirstName())) {
                 nameCounts.put(s.getFirstName(),
-                        new Integer(nameCounts.get(s.getFirstName()) + 1));
+                         (nameCounts.get(s.getFirstName()) + 1));
             } else {
                 nameCounts.put(s.getFirstName(), 1);
             }
@@ -100,7 +100,9 @@ public final class StudentAnalytics {
      */
     public String mostCommonFirstNameOfInactiveStudentsParallelStream(
             final Student[] studentArray) {
-        throw new UnsupportedOperationException();
+        return Stream.of(studentArray).parallel().filter(s -> !s.checkIsCurrent()).map(Student::getFirstName)
+                .collect(Collectors.groupingBy(Function.identity(),Collectors.counting())).entrySet().stream()
+                .max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
     }
 
     /**
@@ -136,6 +138,6 @@ public final class StudentAnalytics {
      */
     public int countNumberOfFailedStudentsOlderThan20ParallelStream(
             final Student[] studentArray) {
-        throw new UnsupportedOperationException();
+        return (int) Stream.of(studentArray).parallel().filter(s -> !s.checkIsCurrent() && s.getAge() > 20 && s.getGrade() < 65).count();
     }
 }

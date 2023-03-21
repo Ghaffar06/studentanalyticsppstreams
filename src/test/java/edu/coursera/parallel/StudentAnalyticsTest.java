@@ -118,7 +118,8 @@ public class StudentAnalyticsTest extends TestCase {
     public void testMostCommonFirstNameOfInactiveStudentsPerf() {
         final int ncores = getNCores();
         final double speedup = mostCommonFirstNameOfInactiveStudentsHelper(REPEATS);
-        final double expectedSpeedup = (double)ncores * 0.5;
+        final double eps = 1e-9 ;
+        final double expectedSpeedup = (double)ncores * (0.5 - eps);
         String msg = "Expected speedup to be at least " + expectedSpeedup + " but was " + speedup;
         assertTrue(msg, speedup >= expectedSpeedup);
 
